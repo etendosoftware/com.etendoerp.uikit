@@ -1,0 +1,295 @@
+{
+  "version": "0.1.0-r0",
+  "module": {
+    "javapackage": "com.etendoerp.uikit",
+    "prefix": "ETUIK",
+    "namespace": "OB.UIKit",
+    "repo": "etendosoftware/com.etendoerp.uikit"
+  },
+  "status": {
+    "round": "R0-SPIKE",
+    "runtime": "absent",
+    "note": "L5 facts and L6 gates are real. Recipes, API reference and runtime land in R1; entries marked planned are not written yet and must not exist."
+  },
+  "budget": {
+    "typical_window": "AGENTS.md + one recipe + uikit.d.ts, about 10k tokens, zero core files read"
+  },
+  "docs": [
+    {
+      "id": "L0",
+      "layer": 0,
+      "file": "AGENTS.md",
+      "title": "Instructions for the agent building a window",
+      "for": "always loaded; the router, the five-step workflow and the invariants",
+      "status": "present",
+      "budget_lines": 120,
+      "tokens": 1200
+    },
+    {
+      "id": "README",
+      "layer": 0,
+      "file": "README.md",
+      "title": "Human entry point",
+      "for": "orientation for a person; an agent should read AGENTS.md instead",
+      "status": "present",
+      "budget_lines": 40,
+      "tokens": 250
+    },
+    {
+      "id": "L5-facts",
+      "layer": 5,
+      "file": "docs/platform/facts.md",
+      "title": "Verified facts about core",
+      "for": "settling a contradiction; every claim carries a file:line citation the gate re-checks",
+      "status": "present",
+      "budget_lines": 200,
+      "tokens": 1500
+    },
+    {
+      "id": "L1-list-board",
+      "layer": 1,
+      "file": "docs/recipes/list-board.md",
+      "title": "Records in columns, moved between them",
+      "for": "kanban-shaped windows",
+      "status": "planned",
+      "budget_lines": 260,
+      "tokens": 2900
+    },
+    {
+      "id": "L1-form",
+      "layer": 1,
+      "file": "docs/recipes/form.md",
+      "title": "Single-record edit screen",
+      "for": "one record, fields, save",
+      "status": "planned",
+      "budget_lines": 240,
+      "tokens": 2600
+    },
+    {
+      "id": "L1-master-detail",
+      "layer": 1,
+      "file": "docs/recipes/master-detail.md",
+      "title": "List plus detail pane",
+      "for": "POS-shaped windows: pick from a list, act on a basket",
+      "status": "planned",
+      "budget_lines": 280,
+      "tokens": 3100
+    },
+    {
+      "id": "L1-tiles",
+      "layer": 1,
+      "file": "docs/recipes/tiles.md",
+      "title": "Read-only metric tiles",
+      "for": "dashboards",
+      "status": "planned",
+      "budget_lines": 180,
+      "tokens": 1900
+    },
+    {
+      "id": "L1-wizard",
+      "layer": 1,
+      "file": "docs/recipes/wizard.md",
+      "title": "Multi-step guided flow",
+      "for": "processes with ordered steps",
+      "status": "planned",
+      "budget_lines": 220,
+      "tokens": 2400
+    },
+    {
+      "id": "L2-dts",
+      "layer": 2,
+      "file": "docs/api/uikit.d.ts",
+      "title": "The whole public surface",
+      "for": "exact signatures; generated from JSDoc so it cannot drift",
+      "status": "planned",
+      "budget_lines": 400,
+      "tokens": 5000
+    },
+    {
+      "id": "L2-reference",
+      "layer": 2,
+      "file": "docs/api/reference.md",
+      "title": "Per-symbol reference",
+      "for": "one symbol at a time: signature, params, throws, minimal example",
+      "status": "planned",
+      "budget_lines": 600,
+      "tokens": 7000
+    },
+    {
+      "id": "L3-data",
+      "layer": 3,
+      "file": "docs/guides/data.md",
+      "title": "Datasources, criteria, paging, writes",
+      "for": "reading and writing entities",
+      "status": "planned",
+      "budget_lines": 220,
+      "tokens": 2400
+    },
+    {
+      "id": "L3-actions",
+      "layer": 3,
+      "file": "docs/guides/actions-and-permissions.md",
+      "title": "Server actions and access control",
+      "for": "business logic, and closing the F6 gap",
+      "status": "planned",
+      "budget_lines": 200,
+      "tokens": 2200
+    },
+    {
+      "id": "L3-drag",
+      "layer": 3,
+      "file": "docs/guides/drag.md",
+      "title": "Drag, drop and the keyboard equivalent",
+      "for": "moving things between containers",
+      "status": "planned",
+      "budget_lines": 180,
+      "tokens": 2000
+    },
+    {
+      "id": "L3-theming",
+      "layer": 3,
+      "file": "docs/guides/theming.md",
+      "title": "Tokens, and living without the skin",
+      "for": "CSS that works with the skin present or absent",
+      "status": "planned",
+      "budget_lines": 160,
+      "tokens": 1700
+    },
+    {
+      "id": "L3-i18n",
+      "layer": 3,
+      "file": "docs/guides/i18n.md",
+      "title": "Labels and formatting",
+      "for": "t(), AD_MESSAGE rows, money, dates",
+      "status": "planned",
+      "budget_lines": 140,
+      "tokens": 1500
+    },
+    {
+      "id": "L3-nav",
+      "layer": 3,
+      "file": "docs/guides/navigation.md",
+      "title": "Opening standard windows and records",
+      "for": "handing off to core UI",
+      "status": "planned",
+      "budget_lines": 140,
+      "tokens": 1500
+    },
+    {
+      "id": "L3-lifecycle",
+      "layer": 3,
+      "file": "docs/guides/lifecycle.md",
+      "title": "Mount, activate, resize, unmount",
+      "for": "tabs, bookmarks, cleanup",
+      "status": "planned",
+      "budget_lines": 180,
+      "tokens": 2000
+    },
+    {
+      "id": "L4-ad",
+      "layer": 4,
+      "file": "docs/ad/README.md",
+      "title": "The AD rows a window needs",
+      "for": "step 2 of the workflow: View_Impl, AD_MENU, Role_Access, AD_MESSAGE",
+      "status": "planned",
+      "budget_lines": 200,
+      "tokens": 2200
+    }
+  ],
+  "symbols": [
+    {
+      "name": "OB.UIKit.defineView",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.defineDatasource",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.defineAction",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.html",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.raw",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.t",
+      "documented_in": "L3-i18n",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.fmt",
+      "documented_in": "L3-i18n",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.badge",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.nav",
+      "documented_in": "L3-nav",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.debounce",
+      "documented_in": "L2-reference",
+      "status": "planned"
+    }
+  ],
+  "invariants": [
+    "never edit core: src/, src-core/, src-wad/, modules_core/",
+    "never touch the SmartClient handle after draw: no setStyleName, no getHandle().innerHTML",
+    "never add a listener on document or window; use the view's on: map",
+    "every visible string goes through t('KEY') and needs an AD_MESSAGE row in your module",
+    "CSS uses --uik-* only; no --sk-* outside the token block, no .etskin-* selector",
+    "one IIFE per file, no top-level bindings",
+    "ES2018 is allowed and correct; do not downgrade modern syntax to ES5 (fact F1)",
+    "parsing is not working: load the page before declaring a window done"
+  ],
+  "gates": [
+    {
+      "id": "G0",
+      "what": "the kernel's own JSMin accepts ES2018 and the harness rejects a real syntax error"
+    },
+    {
+      "id": "G1",
+      "what": "every shipped web file survives JSMin + node --check"
+    },
+    {
+      "id": "G2",
+      "what": "every shipped web file is a single IIFE with no top-level bindings"
+    },
+    {
+      "id": "G3",
+      "what": "AGENTS.md is within budget and states the workflow and the invariants"
+    },
+    {
+      "id": "G4",
+      "what": "this index resolves: present docs exist, planned docs do not, budgets respected"
+    },
+    {
+      "id": "G5",
+      "what": "every code block in the docs minifies and parses; every OB.UIKit symbol named in the docs is indexed"
+    },
+    {
+      "id": "G6",
+      "what": "every file:line citation in L5 still points at the text it claims"
+    },
+    {
+      "id": "G7",
+      "what": "no core file is modified in the working tree"
+    }
+  ]
+}
