@@ -274,6 +274,67 @@ let index = null;
   }
 }
 
+/* ------------------------------------------------------------------ G8 docs vs implementation */
+
+/*
+ * The gate that keeps the two halves of this module honest. Documentation is half the
+ * deliverable here, so drift between what the docs promise and what the runtime assigns is a
+ * defect of the same weight as a broken function. It checks three directions:
+ *   disk -> index   an unregistered doc is a doc no agent will ever be routed to
+ *   runtime -> index every OB.UIKit.* the runtime assigns must be declared and documented
+ *   index -> runtime a symbol the index no longer calls planned must actually ship
+ */
+{
+  const problems = [];
+  const docs = index?.docs ?? [];
+  const registered = new Set(docs.map((d) => path.join(MODULE, d.file)));
+  const onDisk = [path.join(MODULE, 'AGENTS.md'), path.join(MODULE, 'README.md'),
+    ...walk(path.join(MODULE, 'docs'), (f) => f.endsWith('.md'))].filter(exists);
+  for (const f of onDisk) {
+    if (!registered.has(f)) {
+      problems.push(`${rel(f)} exists but nothing in the index points at it, so no agent is routed to it`);
+    }
+  }
+
+  const declared = new Map((index?.symbols ?? []).map((s) => [s.name, s]));
+  const byId = new Map(docs.map((d) => [d.id, d]));
+  const runtimeFiles = walk(path.join(MODULE, 'web'), (f) => f.endsWith('.js'));
+  const shipped = new Set();
+  for (const f of runtimeFiles) {
+    for (const m of read(f).matchAll(/OB\.UIKit\.([A-Za-z_$][\w$]*)\s*=(?!=)/g)) {
+      shipped.add(`OB.UIKit.${m[1]}`);
+    }
+  }
+
+  for (const name of shipped) {
+    const sym = declared.get(name);
+    if (!sym) {
+      problems.push(`${name} is assigned by the runtime but absent from the index; it is undocumented API`);
+      continue;
+    }
+    if (sym.status === 'planned') problems.push(`${name} ships but the index still marks it planned`);
+    const doc = byId.get(sym.documented_in);
+    if (doc && doc.status !== 'present') {
+      problems.push(`${name} ships but its documentation ${doc.file} is still planned`);
+    }
+  }
+  for (const [name, sym] of declared) {
+    if (sym.status !== 'planned' && !shipped.has(name)) {
+      problems.push(`the index marks ${name} as ${sym.status} but no runtime file assigns it`);
+    }
+  }
+
+  const claim = index?.status?.runtime ?? '(unset)';
+  const real = runtimeFiles.length ? 'present' : 'absent';
+  if (claim !== real) {
+    problems.push(`the index says the runtime is ${claim} but ${runtimeFiles.length} runtime file(s) were found`);
+  }
+
+  problems.length ? fail('G8', 'doc-impl', problems.join('; '))
+    : pass('G8', 'doc-impl', `${onDisk.length} doc(s) on disk, all registered; runtime ${real} and the index agrees; `
+      + `${declared.size} symbol(s) declared, ${shipped.size} shipped`);
+}
+
 /* ------------------------------------------------------------------ report */
 
 const width = Math.max(...results.map((r) => r.name.length));

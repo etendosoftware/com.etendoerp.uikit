@@ -46,6 +46,16 @@
       "tokens": 1500
     },
     {
+      "id": "L1-sample-okr",
+      "layer": 1,
+      "file": "docs/samples/okr-review.md",
+      "title": "Sample: quarterly OKR review",
+      "for": "building the OKR review window: the agreed shape, state, regions, formulas, data contract and AD rows",
+      "status": "present",
+      "budget_lines": 260,
+      "tokens": 2600
+    },
+    {
       "id": "L1-list-board",
       "layer": 1,
       "file": "docs/recipes/list-board.md",
@@ -290,6 +300,10 @@
     {
       "id": "G7",
       "what": "no core file is modified in the working tree"
+    },
+    {
+      "id": "G8",
+      "what": "documentation and implementation agree: no doc on disk is unregistered, nothing the runtime ships is undocumented, and no symbol is marked planned while it ships"
     }
   ]
 }
