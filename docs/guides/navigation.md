@@ -80,7 +80,7 @@ the window itself opens on. A miss returns `null`.
 A datasource hands the ids down with the rest of its metadata:
 
 ```js
-OB.UIKit.datasource('cockpit', { action: 'com.etendoerp.uikit.demos.orders.Cockpit' });
+OB.UIKit.datasource('cockpit', { action: 'com.etendoerp.uikit.samples.orders.Cockpit' });
 OB.UIKit.fetch('cockpit', {}, function (err, data) {
   if (err) {
     return;

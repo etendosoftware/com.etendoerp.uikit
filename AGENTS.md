@@ -4,16 +4,20 @@ You are here because someone asked for a screen Etendo does not have: a board, a
 a picking view, a tile dashboard. This module is how you build it. Read this file, then
 the worked sample. Do not read core.
 
-> **STATUS: the runtime ships.** `OB.UIKit` (20 public symbols) and the quarterly OKR review
-> window both run in the live instance. For signatures read `docs/api/uikit.d.ts`, generated from
-> the runtime's own JSDoc. The recipes and the per-symbol reference are not written yet: never cite them.
+> **STATUS: the runtime ships.** `OB.UIKit` (20 public symbols) and every window in
+> `docs/samples/` run in the live instance. For signatures read `docs/api/uikit.d.ts`, generated from
+> the runtime's own JSDoc. Two recipes are harvested from the shipped windows and are safe to
+> cite: `docs/recipes/tiles.md` and `docs/recipes/master-detail.md`. The other three and the
+> per-symbol reference are not written: never cite those.
 
 ## The workflow — five steps, in this order, no exceptions
 
-1. **Pick the shape.** Read `docs/samples/okr-review.md`. It is the only complete worked example
-   of every layer — state, regions, derived numbers, data contract, AD rows, gates — so name the
-   part of it you are copying before you write any code. If the request is nothing like it, say
-   which shape you propose and why, then build that the same way. Do not improvise silently.
+1. **Pick the shape.** If it is metric tiles, or a list plus a detail pane, read that recipe
+   first. Then read the closest sample in `docs/samples/` — there is one per shipped window and
+   each covers every layer: state, regions, derived numbers, data contract, AD rows, gates.
+   `alerts-inbox.md` is the one that also writes. Name the part you are copying before you write
+   any code. If the request is nothing like any of them, say which shape you propose and why,
+   then build that the same way. Do not improvise silently.
 2. **Create the AD rows.** A window needs `OBUIAPP_View_Impl`, `AD_MENU`,
    `OBUIAPP_View_Role_Access` and one `AD_MESSAGE` per label; §7 of the sample is the worked
    list, and `docs/ad/README.md` is planned, not written. **Without these rows the window does
@@ -50,7 +54,9 @@ the worked sample. Do not read core.
 |---|---|---|
 | build any window at all | this file | L0 |
 | the one complete worked example, end to end | `docs/samples/okr-review.md` | L1 |
-| a board, form, master-detail, tiles, wizard | `docs/recipes/<shape>.md` — **planned, do not cite it**; work from the sample | L1 |
+| read-only metric tiles | `docs/recipes/tiles.md` | L1 |
+| a list plus a detail pane | `docs/recipes/master-detail.md` | L1 |
+| a board, a form, a wizard | no recipe yet — **do not cite one**; work from the closest sample | L1 |
 | an exact signature, an option name | `docs/api/uikit.d.ts` | L2 |
 | one symbol at a time, with examples | `docs/api/reference.md` — **planned, do not cite it** | L2 |
 | writes, optimistic updates, CSRF, permissions | `docs/guides/actions-and-permissions.md` | L3 |

@@ -11,8 +11,8 @@ rather than in navigation, and a derived list computed in the client over data a
 
 **Why this sample exists.** It is the kit's first real consumer, and the most representative of
 what a customer actually asks for: filters, a three-level hierarchy, derived numbers, and a
-layout that is not a grid. One consumer does not amortise a framework, which is what the demo
-module `com.etendoerp.uikit.demos` is for.
+layout that is not a grid. One consumer does not amortise a framework, which is what the five
+demo windows that followed it in this module are for.
 
 ---
 

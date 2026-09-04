@@ -22,7 +22,7 @@ about to lose the token, the in-flight guard and the rollback all at once.
 ```js
 OB.UIKit.defineAction({
   name: 'approve',
-  action: 'com.etendoerp.uikit.demos.orders.Approve',
+  action: 'com.etendoerp.uikit.samples.orders.Approve',
   confirm: 'ETDEMO_ConfirmApprove',
   payload: function (state, arg) {
     return { orderId: arg.id, note: state.note };
@@ -157,7 +157,7 @@ Read that as a security statement, because it is one:
 So every permission decision lives in SQL, in the datasource and in the action:
 
 ```js
-OB.UIKit.datasource('orders', { action: 'com.etendoerp.uikit.demos.orders.List' });
+OB.UIKit.datasource('orders', { action: 'com.etendoerp.uikit.samples.orders.List' });
 ```
 
 and, on the server, every statement — read and write alike — carries
