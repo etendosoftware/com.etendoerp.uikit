@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-r1",
+  "version": "0.2.0-r2",
   "module": {
     "javapackage": "com.etendoerp.uikit",
     "prefix": "ETUIK",
@@ -7,9 +7,9 @@
     "repo": "etendosoftware/com.etendoerp.uikit"
   },
   "status": {
-    "round": "R1-OKR-CLASSIC",
+    "round": "R2-UIKIT-DEMOS",
     "runtime": "present",
-    "note": "The runtime and the OKR sample window ship and run: L5 facts, L6 source gates and L7 window gates are all real. L2 is generated from the runtime JSDoc. Recipes and the per-symbol reference land later; entries marked planned are not written yet and must not exist."
+    "note": "The runtime and six windows ship and run: the OKR review in com.etendoerp.uikit.samples and five demos in com.etendoerp.uikit.demos. L5 facts, L6 source gates and L7 window gates are real; L7 is a runner over the per-window manifests. L2-dts is generated from the runtime JSDoc. Recipes and the per-symbol reference land later, harvested from the samples rather than written ahead of them; entries marked planned are not written yet and must not exist."
   },
   "budget": {
     "typical_window": "AGENTS.md + one recipe + uikit.d.ts, about 10k tokens, zero core files read"
@@ -104,6 +104,56 @@
       "status": "planned",
       "budget_lines": 220,
       "tokens": 2400
+    },
+    {
+      "id": "L1-sample-alerts",
+      "layer": 1,
+      "file": "docs/samples/alerts-inbox.md",
+      "title": "Sample: administrator alert inbox",
+      "for": "building a window that writes: optimistic acknowledge with rollback, drill-down into the standard window that owns the record, and auto-refresh",
+      "status": "planned",
+      "budget_lines": 300,
+      "tokens": 3000
+    },
+    {
+      "id": "L1-sample-cash",
+      "layer": 1,
+      "file": "docs/samples/cash-portfolio.md",
+      "title": "Sample: receivable and payable portfolio",
+      "for": "building an aging cockpit: a switchable AR/AP side, buckets over a reference date, a twelve-month series, and one currency at a time",
+      "status": "planned",
+      "budget_lines": 300,
+      "tokens": 3000
+    },
+    {
+      "id": "L1-sample-picking",
+      "layer": 1,
+      "file": "docs/samples/order-picking.md",
+      "title": "Sample: order preparation and confirm",
+      "for": "building a window that mutates ERP documents: a document-action whitelist, a dry run by default, re-reading under scope, and rendering the ERP error verbatim",
+      "status": "planned",
+      "budget_lines": 300,
+      "tokens": 3000
+    },
+    {
+      "id": "L1-sample-stock",
+      "layer": 1,
+      "file": "docs/samples/stock-pivot.md",
+      "title": "Sample: stock by product and warehouse",
+      "for": "building a paged pivot with a search box: debounce, limit/offset and ilike in SQL, and a column axis that ignores the active filter",
+      "status": "planned",
+      "budget_lines": 300,
+      "tokens": 3000
+    },
+    {
+      "id": "L1-sample-partner360",
+      "layer": 1,
+      "file": "docs/samples/partner-360.md",
+      "title": "Sample: business partner 360",
+      "for": "building a window with lazily fetched datasources: three sources with when() conditions, per-row tab resolution in SQL, and counts before anything is opened",
+      "status": "planned",
+      "budget_lines": 300,
+      "tokens": 3000
     },
     {
       "id": "L2-dts",
@@ -279,7 +329,7 @@
     },
     {
       "name": "OB.UIKit.defineAction",
-      "documented_in": "L2-reference",
+      "documented_in": "L3-actions",
       "status": "planned"
     },
     {
@@ -294,7 +344,17 @@
     },
     {
       "name": "OB.UIKit.debounce",
-      "documented_in": "L2-reference",
+      "documented_in": "L2-dts",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.bars",
+      "documented_in": "L2-dts",
+      "status": "planned"
+    },
+    {
+      "name": "OB.UIKit.spark",
+      "documented_in": "L2-dts",
       "status": "planned"
     }
   ],
