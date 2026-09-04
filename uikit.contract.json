@@ -111,7 +111,7 @@
       "file": "docs/samples/alerts-inbox.md",
       "title": "Sample: administrator alert inbox",
       "for": "building a window that writes: optimistic acknowledge with rollback, drill-down into the standard window that owns the record, and auto-refresh",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 300,
       "tokens": 3000
     },
