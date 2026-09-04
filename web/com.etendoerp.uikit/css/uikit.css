@@ -151,3 +151,188 @@
     animation: none !important;
   }
 }
+
+/* ------------------------------------------------------------------ bars
+ * bars() is HTML and not SVG so that the labels stay real text: they wrap, they are selectable,
+ * and a screen reader reads them without a foreignObject. Each bar carries --uik-v and paints
+ * its own fill behind that text with a pseudo-element, exactly as .uik-rail does. The state
+ * class sets color, and the fill reads currentColor from it.
+ */
+
+.uik .uik-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.uik .uik-bar {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  background: var(--uik-surface);
+  box-shadow: inset 0 0 0 1px var(--uik-line);
+}
+
+.uik .uik-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--uik-v, 0%);
+  border-radius: 3px;
+  background: currentColor;
+  opacity: 0.16;
+}
+
+.uik .uik-bar[data-negative]::before {
+  /* A negative value is drawn at its absolute length, so the only thing left to distinguish it
+   * is the direction: it grows from the right edge. */
+  inset: 0 0 0 auto;
+  border-style: dashed;
+}
+
+.uik .uik-bar-label {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--uik-ink);
+}
+
+.uik .uik-bar-label em {
+  display: block;
+  color: var(--uik-ink-soft);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.uik .uik-bar-value {
+  position: relative;
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- spark */
+
+.uik .uik-spark {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+.uik .uik-spark-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.uik .uik-spark-area {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.14;
+}
+
+/* ------------------------------------------------------------------ busy
+ * The root carries .uik-busy while any request is in flight. It must never hide or move what is
+ * already painted -- a refetch is not a reload -- so it desaturates slightly and blocks clicks,
+ * and nothing else.
+ */
+
+.uik.uik-busy {
+  cursor: progress;
+}
+
+.uik.uik-busy .uik-region {
+  opacity: 0.62;
+  transition: opacity 120ms linear;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------- table */
+
+.uik .uik-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--uik-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.uik .uik-table th,
+.uik .uik-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--uik-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.uik .uik-table th {
+  color: var(--uik-ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.uik .uik-table td[data-num],
+.uik .uik-table th[data-num] {
+  text-align: right;
+}
+
+.uik .uik-table tbody tr:hover {
+  background: var(--uik-ground);
+}
+
+/* ----------------------------------------------------------------- pager */
+
+.uik .uik-pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  color: var(--uik-ink-soft);
+  font-size: 12px;
+}
+
+.uik .uik-pager button {
+  padding: 3px 9px;
+  border: 1px solid var(--uik-line);
+  border-radius: 3px;
+  background: var(--uik-surface);
+  color: var(--uik-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.uik .uik-pager button:disabled {
+  color: var(--uik-flat);
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ chip */
+
+.uik .uik-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--uik-line);
+  border-radius: 12px;
+  background: var(--uik-surface);
+  color: var(--uik-ink-soft);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.uik .uik-chip[aria-pressed="true"],
+.uik .uik-chip.on {
+  border-color: var(--uik-brand);
+  background: color-mix(in srgb, var(--uik-brand) 10%, var(--uik-surface));
+  color: var(--uik-brand);
+  font-weight: 600;
+}
