@@ -14,6 +14,9 @@ what a customer actually asks for: filters, a three-level hierarchy, derived num
 layout that is not a grid. One consumer does not amortise a framework, which is what the five
 demo windows that followed it in this module are for.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/okr-review-initial.png) - [filtered by department](img/okr-review-dept-filter.png).
+
 ---
 
 ## 1. The user's workflow, in their words

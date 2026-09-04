@@ -18,6 +18,9 @@ The window is view impl `DE30C1A4B2F94E3E8A6D5C4B3A291501`; the app is
 `etdemo-partner360.view.json` and `verify/etdemo-partner360.checks.mjs`, all under
 `modules/com.etendoerp.uikit.samples`.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/partner-360-initial.png) - [a lazy tab just loaded](img/partner-360-lazy-tab.png).
+
 ## 0. What this data can and cannot show — read this first
 
 Unlike the stock and alert samples, **this window has genuinely good data in the demo instance.**

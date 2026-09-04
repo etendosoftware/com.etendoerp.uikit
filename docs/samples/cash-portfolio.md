@@ -12,6 +12,9 @@ What it adds to the OKR sample: a reference date that is part of the contract, a
 selection deliberately does **not** move the numbers above it, and a currency rule that removes
 rows and says so.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/cash-portfolio-initial.png) - [the 31-60 bucket selected](img/cash-portfolio-bucket-d60.png).
+
 ## 0. What was asked for, and what the data actually is
 
 The request was a receivables cockpit: who owes us, how overdue, how much. The instance cannot
