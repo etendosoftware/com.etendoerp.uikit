@@ -124,14 +124,14 @@ function railRegion(state, data) {
 3. **Active state is `aria-pressed` plus `.uik-chip.on`**, not a colour alone.
 4. **Never omit the region.** A region missing from the map `render` returns is written as the empty
    string, so a guard returning nothing on first paint makes the row vanish -- return a skeleton.
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1289|out[r] === undefined ? '' : out[r]-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1307|out[r] === undefined ? '' : out[r]-->
 
 ## 6. The tile CSS is yours, and it is scoped
 
 The runtime gives the view's root element `uik uik-<viewname lowercased>`, which is the hook to
 write two rules without leaking into another window:
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1030|root.className = 'uik uik-' + name.toLowerCase();-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1048|root.className = 'uik uik-' + name.toLowerCase();-->
 
 ```css
 .uik-etdemo_stock .stk-stat b { font-weight: 700; font-variant-numeric: tabular-nums; }

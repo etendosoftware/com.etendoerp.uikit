@@ -72,7 +72,7 @@ side being left.
 ## 3. Regions
 
 Four, declared in `regions[]`, which is what makes each replaceable on its own. The root gets
-`uik uik-etdemo_cash` <!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1030|root.className = 'uik uik-'--> and every rule in `css/cash-portfolio.css` is scoped under it.
+`uik uik-etdemo_cash` <!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1048|root.className = 'uik uik-'--> and every rule in `css/cash-portfolio.css` is scoped under it.
 
 | region    | contents                                                              |
 | --------- | --------------------------------------------------------------------- |

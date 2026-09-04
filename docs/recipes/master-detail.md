@@ -46,22 +46,21 @@ snapshots it with `JSON.stringify` to roll back. Beyond that:
   `ctx.set({ dept: el.dataset.dept, open: {} })`: panel ids from the previous department are
   meaningless, and a stale bag silently re-opens an unrelated row.
 
-That reset matters for a second reason. The runtime clones `spec.state` **shallowly** into each
-instance, and `ctx.toggle` mutates the bag in place rather than replacing it:
+That reset matters within one instance: `ctx.toggle` mutates the bag in place, so ids from a
+previous population outlive the change until something replaces the whole bag. Across instances
+the bag *is* fresh: the runtime deep-copies `spec.state`, a JSON round trip at the same depth
+`defineAction`'s rollback snapshot already needs. So a reopened tab never inherits the open
+panels of the one that was closed, and what cannot survive JSON still cannot live in state.
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|950|this.uikState = isc.shallowClone(spec.state);-->
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1093|var bag = self.uikState[key] || {};-->
-
-So the `{}` you wrote in `spec.state` is not proven to be a fresh object per open tab, while
-scalars -- which `ctx.set` replaces -- are safe. Prefer scalars; where you need a bag, replace it
-with `ctx.set({ open: {} })` at every population change, which unshares it.
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1111|var bag = self.uikState[key] || {};-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|735|return spec.state ? JSON.parse(JSON.stringify(spec.state)) : {};-->
 
 ## 3. Data: the lazy alias is the spine of shape A
 
 This is the whole mechanism, and shape A rests on it. An alias is either a datasource name or an
 entry of `{ source, params, when, keep }`:
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|823|function dataEntry(value) {-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|841|function dataEntry(value) {-->
 
 ```js
 /* ETDEMO_Partner360: three aliases, three conditions. The shape to copy for shape A. */
@@ -106,10 +105,10 @@ Five rules, all load-bearing:
 3. **`keep` defaults to true, so leave it alone.** When a `when` turns false the alias holds its
    last value, so reopening a tab, or reselecting the partner already loaded, costs no round trip.
    Set `keep: false` only when a stale value would be *wrong* -- and then handle `undefined`.
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1205|next[alias] = was[alias];-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1223|next[alias] = was[alias];-->
 4. **A refetch happens only when an alias's signature actually moves.** Same params, no request:
    that is why paging the detail is one request, not three.
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1215|if (sig !== was[alias] || self.uikData[alias] === undefined) {-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1233|if (sig !== was[alias] || self.uikData[alias] === undefined) {-->
 5. **The view-level `params` still names every key**, including the ones no alias reads: it is what
    `getBookMarkParams` publishes, so a master-detail window whose selection is missing from it
    cannot be linked to. History moves only when that signature moves.
@@ -184,7 +183,7 @@ var on = {
 };
 ```
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1069|First match wins. Registration order is the priority order-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1087|First match wins. Registration order is the priority order-->
 
 * **Register the specific selector before the general one.** A row containing a drill-down link
   needs `[data-invoice]` before `[data-partner]`, or the click only ever expands the row.
@@ -235,7 +234,7 @@ var hooks = {
 };
 ```
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|999|spec.destroy(this.uikCtx());-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1017|spec.destroy(this.uikCtx());-->
 
 **Get this one right; two shipped samples do not.** `activate`, `deactivate` and `destroy` all
 receive a `ctx`, and `ctx` is a fresh object on every call -- so `destroy: function (s) {
