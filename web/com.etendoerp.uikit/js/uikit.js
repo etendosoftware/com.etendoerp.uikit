@@ -22,7 +22,7 @@
     return;
   }
 
-  var VERSION = '0.2.0';
+  var VERSION = '0.3.0';
   var DATASOURCES = {};
   var ACTIONS = {};
   var LABELS = {};

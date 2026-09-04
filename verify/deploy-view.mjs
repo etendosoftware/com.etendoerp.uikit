@@ -118,8 +118,10 @@ for (const entry of manifest.bundle) {
     );
   } else if (entry.type === 'labels') {
     const map = labels(entry.prefixes);
-    const missing = Object.keys(map).length;
-    console.log(`  ${missing} etiqueta(s) desde AD_MESSAGE: ${Object.keys(map).join(', ') || '(ninguna)'}`);
+    const found = Object.keys(map).length;
+    // A diagnostic, so stderr: --print sends the bundle itself to stdout, and a line of prose at
+    // the top of a redirected .ftl is a template that fails to parse.
+    console.error(`  ${found} etiqueta(s) desde AD_MESSAGE: ${Object.keys(map).join(', ') || '(ninguna)'}`);
     parts.push(`/* AD_MESSAGE */\nOB.UIKit.labels(${JSON.stringify(map)});`);
   } else {
     fail(`tipo de entrada desconocido: ${entry.type}`);
