@@ -131,7 +131,7 @@
       "file": "docs/samples/order-picking.md",
       "title": "Sample: order preparation and confirm",
       "for": "building a window that mutates ERP documents: a document-action whitelist, a dry run by default, re-reading under scope, and rendering the ERP error verbatim",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 300,
       "tokens": 3000
     },
