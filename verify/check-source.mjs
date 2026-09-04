@@ -152,16 +152,32 @@ function minifyAndParse(file) {
 /* ------------------------------------------------------------------ G1/G2 shipped files */
 
 /*
- * Both modules, not just the framework: the sample app ships web files into the same page, and a
- * syntax error there breaks the window just as thoroughly. The gates below are about the hygiene
- * of anything that reaches a browser, so they follow the files, not the module boundary.
+ * Every com.etendoerp.uikit* module, not just the framework: the sample and demo apps ship web
+ * files into the same page, and a syntax error there breaks the window just as thoroughly. The
+ * gates below are about the hygiene of anything that reaches a browser, so they follow the files,
+ * not the module boundary. Discovered rather than listed, because a sibling module forgotten in a
+ * hardcoded list would ship unchecked JavaScript -- which is exactly what these gates exist to
+ * stop. A module with no web/ directory, or an empty one, simply contributes no files.
  */
-const shipped = [MODULE, path.join(ROOT, 'modules/com.etendoerp.uikit.samples')]
-  .flatMap((m) => walk(path.join(m, 'web'), (f) => f.endsWith('.js')));
+const MODULES = path.join(ROOT, 'modules');
+const shippingModules = (exists(MODULES) ? fs.readdirSync(MODULES, { withFileTypes: true }) : [])
+  .filter((e) => e.isDirectory() && /^com\.etendoerp\.uikit(\.|$)/.test(e.name))
+  .map((e) => path.join(MODULES, e.name))
+  .sort();
+const shipped = shippingModules.flatMap((m) => walk(path.join(m, 'web'), (f) => f.endsWith('.js')));
 
 if (shipped.length === 0) {
-  skip('G1', 'jsmin-shipped', 'no web resources shipped yet (R0: the runtime is unwritten)');
-  skip('G2', 'iife', 'no web resources shipped yet');
+  /*
+   * FAIL, not SKIP. SKIP is for a gate that cannot run -- no javac, no running instance. This
+   * gate can run perfectly well; it has simply found that a UI framework ships no JavaScript at
+   * all, which is a broken framework, not an inapplicable check. Reporting it SKIP would also
+   * leave the exit code at 0 and print the round as green, which is the one outcome worse than
+   * a red gate.
+   */
+  const why = `no .js under web/ in ${shippingModules.length} com.etendoerp.uikit* module(s): `
+    + 'the runtime ships web files, so finding none means the module is broken or misplaced';
+  fail('G1', 'jsmin-shipped', why);
+  fail('G2', 'iife', why);
 } else {
   const bad = [];
   for (const file of shipped) {

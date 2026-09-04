@@ -2,19 +2,22 @@
 
 You are here because someone asked for a screen Etendo does not have: a board, a POS,
 a picking view, a tile dashboard. This module is how you build it. Read this file, then
-exactly one recipe. Do not read core.
+the worked sample. Do not read core.
 
-> **STATUS: R0.** The runtime does not exist yet — `OB.UIKit` is unimplemented, recipes and
-> the API reference land in R1. What is real today: the platform facts (L5) and the gates
-> (L6). Do not write app code against this document yet; see `uikit.contract.json`.
+> **STATUS: the runtime ships.** `OB.UIKit` (14 public symbols) and the quarterly OKR review
+> window both run in the live instance. For signatures read `docs/api/uikit.d.ts`, generated from
+> the runtime's own JSDoc. The recipes and the per-symbol reference are not written yet: never cite them.
 
 ## The workflow — five steps, in this order, no exceptions
 
-1. **Pick the shape.** Match the request to one recipe in `docs/recipes/`. If nothing
-   matches, stop and say so — do not improvise a sixth shape.
-2. **Create the AD rows** from `docs/ad/`. A window needs `OBUIAPP_View_Impl`, `AD_MENU`,
-   `OBUIAPP_View_Role_Access` and one `AD_MESSAGE` per label. **Without these the window
-   does not exist**, however good the JavaScript is. This is the step agents skip.
+1. **Pick the shape.** Read `docs/samples/okr-review.md`. It is the only complete worked example
+   of every layer — state, regions, derived numbers, data contract, AD rows, gates — so name the
+   part of it you are copying before you write any code. If the request is nothing like it, say
+   which shape you propose and why, then build that the same way. Do not improvise silently.
+2. **Create the AD rows.** A window needs `OBUIAPP_View_Impl`, `AD_MENU`,
+   `OBUIAPP_View_Role_Access` and one `AD_MESSAGE` per label; §7 of the sample is the worked
+   list, and `docs/ad/README.md` is planned, not written. **Without these rows the window does
+   not exist**, however good the JavaScript is. This is the step agents skip.
 3. **Write the app.** One file, one IIFE, one `OB.UIKit.defineView({...})` call. Its CSS
    uses `--uik-*` tokens only.
 4. **Run the gates** until green: `node modules/com.etendoerp.uikit/verify/check-source.mjs`,
@@ -46,15 +49,21 @@ exactly one recipe. Do not read core.
 | You need to… | Read | Layer |
 |---|---|---|
 | build any window at all | this file | L0 |
-| a board, form, master-detail, tiles, wizard | `docs/recipes/<shape>.md` | L1 |
-| an exact signature, an option name | `docs/api/reference.md`, `docs/api/uikit.d.ts` | L2 |
-| criteria, paging, writes, permissions, drag, i18n, theming, navigation | `docs/guides/<topic>.md` | L3 |
-| the AD rows a window needs | `docs/ad/README.md` | L4 |
+| the one complete worked example, end to end | `docs/samples/okr-review.md` | L1 |
+| a board, form, master-detail, tiles, wizard | `docs/recipes/<shape>.md` — **planned, do not cite it**; work from the sample | L1 |
+| an exact signature, an option name | `docs/api/uikit.d.ts` | L2 |
+| one symbol at a time, with examples | `docs/api/reference.md` — **planned, do not cite it** | L2 |
+| criteria, paging, writes, permissions, drag, i18n, theming, navigation | `docs/guides/<topic>.md` — **planned, do not cite it** | L3 |
+| the AD rows a window needs | `docs/ad/README.md` — **planned, do not cite it**; use §7 of the sample | L4 |
 | to check a claim about the platform, or to resolve a contradiction | `docs/platform/facts.md` | L5 |
 | to prove the window works | `verify/` — run it, don't read it | L6 |
 
+The four planned rows are layers that exist and are empty. That is deliberate: knowing the layer
+is there stops you inventing one. Do not create the file, do not cite it as if it were written —
+work from the sample and the `.d.ts` instead, and say in your report what you had to infer.
+
 `uikit.contract.json` indexes every one of those with a token cost, so you can choose by
-budget. A typical window is this file + one recipe + the `.d.ts` — about 10k tokens, and
+budget. A typical window is this file + the sample + the `.d.ts` — about 10k tokens, and
 zero core files read.
 
 ## When something contradicts this file
