@@ -718,6 +718,24 @@
   }
 
   /*
+   * A private, per-instance copy of the declared state.
+   *
+   * isc.shallowClone copies the top level only, so a nested literal -- `open: {}`, `acked: {}` --
+   * would be one object shared by the spec and by every instance of the class. That is reachable
+   * from the menu without any trick: closing a tab and reopening it builds a new instance, which
+   * would then start with the previous one's expanded rows -- and in an inbox whose state holds
+   * optimistic acknowledgements, with a previous instance's writes, including ones that were
+   * rolled back.
+   *
+   * A JSON round trip is the right depth and asks nothing new of the app: defineAction already
+   * requires that state survive exactly this, because that is how the rollback snapshot works.
+   * A key declared undefined is dropped, which reads the same as never declaring it.
+   */
+  function initialState(spec) {
+    return spec.state ? JSON.parse(JSON.stringify(spec.state)) : {};
+  }
+
+  /*
    * Runs one registered action for one view. Private: ctx.run is the only door, and it returns
    * true only when a request actually left the browser -- false covers an unknown action, a
    * refused confirmation, a missing token, and the duplicate that a double click produces.
@@ -947,7 +965,7 @@
         if (!this.tabTitle) {
           this.tabTitle = spec.title ? t(spec.title) : name;
         }
-        this.uikState = isc.shallowClone(spec.state);
+        this.uikState = initialState(spec);
         this.uikData = {};
         this.uikPainted = {};
         this.uikParams = null;

@@ -158,16 +158,16 @@ and the directory's scroll position sacrificed for nothing.
 Now the loader keeps a params signature per alias plus one for the view, and requests only aliases
 whose own signature moved:
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1179|uikParams is a signature per alias plus one for the view, so an alias is requested when-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1197|uikParams is a signature per alias plus one for the view, so an alias is requested when-->
 
 An alias whose `when(state)` is false is not requested at all. What happens to its cached value is
 the `keep` flag, normalised with the other three keys in `dataEntry`:
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|823|function dataEntry(value) {-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|841|function dataEntry(value) {-->
 
 `keep` defaults to **true**, and this window leaves it there:
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|820|false the alias's last value is kept, so flipping a panel closed and open again costs no-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|838|false the alias's last value is kept, so flipping a panel closed and open again costs no-->
 
 So going from the invoices tab to the summary and back costs **no round trip**: the `docs` alias
 kept its last value while `when` was false, and its signature has not moved since. `keep: false` is
@@ -176,7 +176,7 @@ none of the three here qualifies: a partner's order history does not change whil
 
 One more thing the same fix carries: only the *first* load blanks a region.
 
-<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1187|wrote a loading block into a hardcoded region on every single refetch, which erased a-->
+<!--cite modules/com.etendoerp.uikit/web/com.etendoerp.uikit/js/uikit.js|1205|wrote a loading block into a hardcoded region on every single refetch, which erased a-->
 
 **How laziness is proved, and where it is not.** No gate here can observe which aliases the
 browser fetched: a server sees three independent kernel requests and cannot tell a refetch from a
