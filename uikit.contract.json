@@ -141,7 +141,7 @@
       "file": "docs/samples/stock-pivot.md",
       "title": "Sample: stock by product and warehouse",
       "for": "building a paged pivot with a search box: debounce, limit/offset and ilike in SQL, and a column axis that ignores the active filter",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 300,
       "tokens": 3000
     },
