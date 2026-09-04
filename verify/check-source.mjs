@@ -44,6 +44,48 @@ function walk(dir, filter) {
   return out;
 }
 
+/**
+ * The names a runtime file publishes on OB.UIKit.
+ *
+ * Two shapes, because both are legitimate and only one used to be recognised: an incremental
+ * `OB.UIKit.foo = ...`, and the single `OB.UIKit = { foo: ..., bar: ... }` the runtime actually
+ * uses to publish its whole surface at once. Missing the second made G8 blind in the direction
+ * that matters most -- it reported zero shipped symbols for a runtime shipping thirteen.
+ */
+function publicSurface(text) {
+  const names = new Set();
+  for (const m of text.matchAll(/OB\.UIKit\.([A-Za-z_$][\w$]*)\s*=(?!=)/g)) names.add(m[1]);
+
+  const open = text.search(/OB\.UIKit\s*=\s*\{/);
+  if (open === -1) return [...names];
+  // Walk to the matching brace so nested object values cannot end the literal early. Keys are
+  // read at depth 1 only, which is exactly the public surface.
+  const start = text.indexOf('{', open);
+  let depth = 0;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '{') depth++;
+    else if (ch === '}' && --depth === 0) {
+      const body = text.slice(start + 1, i);
+      let nest = 0;
+      for (let j = 0; j < body.length; j++) {
+        const c = body[j];
+        if (c === '{' || c === '[' || c === '(') nest++;
+        else if (c === '}' || c === ']' || c === ')') nest--;
+        else if (nest === 0) {
+          const key = /^([A-Za-z_$][\w$]*)\s*:/.exec(body.slice(j));
+          if (key && (j === 0 || /[\s,{]/.test(body[j - 1]))) {
+            names.add(key[1]);
+            j += key[0].length - 1;
+          }
+        }
+      }
+      break;
+    }
+  }
+  return [...names];
+}
+
 /* ------------------------------------------------------------------ the real minifier */
 
 let jsminReady = null;
@@ -109,7 +151,13 @@ function minifyAndParse(file) {
 
 /* ------------------------------------------------------------------ G1/G2 shipped files */
 
-const shipped = walk(path.join(MODULE, 'web'), (f) => f.endsWith('.js'));
+/*
+ * Both modules, not just the framework: the sample app ships web files into the same page, and a
+ * syntax error there breaks the window just as thoroughly. The gates below are about the hygiene
+ * of anything that reaches a browser, so they follow the files, not the module boundary.
+ */
+const shipped = [MODULE, path.join(ROOT, 'modules/com.etendoerp.uikit.samples')]
+  .flatMap((m) => walk(path.join(m, 'web'), (f) => f.endsWith('.js')));
 
 if (shipped.length === 0) {
   skip('G1', 'jsmin-shipped', 'no web resources shipped yet (R0: the runtime is unwritten)');
@@ -301,9 +349,7 @@ let index = null;
   const runtimeFiles = walk(path.join(MODULE, 'web'), (f) => f.endsWith('.js'));
   const shipped = new Set();
   for (const f of runtimeFiles) {
-    for (const m of read(f).matchAll(/OB\.UIKit\.([A-Za-z_$][\w$]*)\s*=(?!=)/g)) {
-      shipped.add(`OB.UIKit.${m[1]}`);
-    }
+    for (const name of publicSurface(read(f))) shipped.add(`OB.UIKit.${name}`);
   }
 
   for (const name of shipped) {
@@ -333,6 +379,26 @@ let index = null;
   problems.length ? fail('G8', 'doc-impl', problems.join('; '))
     : pass('G8', 'doc-impl', `${onDisk.length} doc(s) on disk, all registered; runtime ${real} and the index agrees; `
       + `${declared.size} symbol(s) declared, ${shipped.size} shipped`);
+}
+
+/* ------------------------------------------------------------------ G9 generated d.ts */
+
+/*
+ * L2 is generated, which is only a guarantee if something re-runs the generator. This runs it in
+ * --check mode: the annotations next to the functions are the source of truth, and a signature
+ * changed in the runtime without regenerating the d.ts is drift of exactly the kind G8 exists to
+ * prevent, one layer down.
+ */
+{
+  const gen = path.join(VERIFY, 'gen-dts.mjs');
+  if (!exists(gen)) {
+    skip('G9', 'dts-fresh', 'gen-dts.mjs is not present');
+  } else {
+    const run = spawnSync(process.execPath, [gen, '--check'], { encoding: 'utf8' });
+    run.status === 0
+      ? pass('G9', 'dts-fresh', (run.stdout || '').trim() || 'docs/api/uikit.d.ts matches the runtime JSDoc')
+      : fail('G9', 'dts-fresh', (run.stderr || run.stdout || '').trim().split('\n').pop());
+  }
 }
 
 /* ------------------------------------------------------------------ report */

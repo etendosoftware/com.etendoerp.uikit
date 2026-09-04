@@ -1,0 +1,153 @@
+/*
+ * com.etendoerp.uikit base stylesheet.
+ *
+ * Scoped under .uik so nothing here can reach Classic's own chrome, and so a window can be
+ * dropped into any skin without a specificity fight. Only the primitives the runtime ships live
+ * here -- regions, badge, rail, meter, loading and error. Everything else belongs to the app.
+ */
+
+.uik {
+  --uik-ink: #16202b;
+  --uik-ink-soft: #5b6b7c;
+  --uik-line: #dde3ea;
+  --uik-surface: #ffffff;
+  --uik-ground: #f4f6f9;
+  --uik-brand: #1b5e8c;
+  --uik-ok: #1c7a54;
+  --uik-risk: #a8700d;
+  --uik-bad: #b23a3a;
+  --uik-flat: #7d8b99;
+
+  box-sizing: border-box;
+  padding: 16px 20px 28px;
+  min-height: 100%;
+  background: var(--uik-ground);
+  color: var(--uik-ink);
+  font: 13px/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.uik *,
+.uik *::before,
+.uik *::after {
+  box-sizing: inherit;
+}
+
+.uik .uik-region + .uik-region {
+  margin-top: 14px;
+}
+
+.uik .uik-region:empty {
+  display: none;
+}
+
+/* --------------------------------------------------------------- feedback */
+
+.uik .uik-loading,
+.uik .uik-error {
+  padding: 18px 20px;
+  border: 1px solid var(--uik-line);
+  border-radius: 6px;
+  background: var(--uik-surface);
+  color: var(--uik-ink-soft);
+}
+
+.uik .uik-error {
+  border-color: color-mix(in srgb, var(--uik-bad) 40%, var(--uik-line));
+  color: var(--uik-bad);
+}
+
+/* ----------------------------------------------------------------- badge */
+
+.uik .uik-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.uik .uik-ok { color: var(--uik-ok); }
+.uik .uik-risk { color: var(--uik-risk); }
+.uik .uik-bad { color: var(--uik-bad); }
+.uik .uik-flat { color: var(--uik-flat); }
+
+/* -------------------------------------------------------------- pace rail
+ * --uik-p is the progress fill, --uik-e the expected mark for today. The gap between them is the
+ * whole point of the instrument, so the mark is drawn on top of the fill, never behind it.
+ */
+
+.uik .uik-rail {
+  position: relative;
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: #e6ebf1;
+  overflow: hidden;
+}
+
+.uik .uik-rail::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--uik-p, 0%);
+  border-radius: 4px 0 0 4px;
+  background: currentColor;
+}
+
+.uik .uik-rail::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: var(--uik-e, 0%);
+  width: 2px;
+  margin-left: -1px;
+  background: var(--uik-ink);
+  opacity: 0.72;
+}
+
+/* ------------------------------------------------------------ score meter */
+
+.uik .uik-meter {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+}
+
+.uik .uik-meter i {
+  width: 7px;
+  height: 12px;
+  border-radius: 1px;
+  background: #e6ebf1;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+
+.uik .uik-meter i.on {
+  background: var(--uik-brand);
+}
+
+.uik .uik-meter i.tg {
+  box-shadow: inset 0 0 0 1px var(--uik-ink);
+}
+
+.uik .uik-meter i.tg:not(.on) {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------- a11y */
+
+.uik :focus-visible {
+  outline: 2px solid var(--uik-brand);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uik * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
