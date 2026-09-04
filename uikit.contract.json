@@ -9,7 +9,7 @@
   "status": {
     "round": "R2-UIKIT-DEMOS",
     "runtime": "present",
-    "note": "The runtime and six windows ship and run: the OKR review in com.etendoerp.uikit.samples and five demos in com.etendoerp.uikit.demos. L5 facts, L6 source gates and L7 window gates are real; L7 is a runner over the per-window manifests. L2-dts is generated from the runtime JSDoc. The runtime now also ships the write path (defineAction plus ctx.run), formatting, navigation, debounce and the two chart primitives, with L3-actions, L3-i18n and L3-nav written against them. The remaining recipes and the per-symbol reference land later, harvested from the samples rather than written ahead of them; entries marked planned are not written yet and must not exist."
+    "note": "The runtime and six windows ship and run: the OKR review and five demos, all in com.etendoerp.uikit.samples. L5 facts, L6 source gates and L7 window gates are real; L7 is a runner over the per-window manifests. L2-dts is generated from the runtime JSDoc. The runtime now also ships the write path (defineAction plus ctx.run), formatting, navigation, debounce and the two chart primitives, with L3-actions, L3-i18n and L3-nav written against them. Two recipes, tiles and master-detail, are harvested from the shipped windows; the remaining three and the per-symbol reference land later, harvested the same way rather than written ahead of the samples; entries marked planned are not written yet and must not exist."
   },
   "budget": {
     "typical_window": "AGENTS.md + one recipe + uikit.d.ts, about 10k tokens, zero core files read"
@@ -80,8 +80,8 @@
       "layer": 1,
       "file": "docs/recipes/master-detail.md",
       "title": "List plus detail pane",
-      "for": "POS-shaped windows: pick from a list, act on a basket",
-      "status": "planned",
+      "for": "windows where picking a row reveals its detail; no sample multi-selects",
+      "status": "present",
       "budget_lines": 280,
       "tokens": 3100
     },
@@ -90,8 +90,8 @@
       "layer": 1,
       "file": "docs/recipes/tiles.md",
       "title": "Read-only metric tiles",
-      "for": "dashboards",
-      "status": "planned",
+      "for": "navigation aggregates that ignore the filter they offer",
+      "status": "present",
       "budget_lines": 180,
       "tokens": 1900
     },
