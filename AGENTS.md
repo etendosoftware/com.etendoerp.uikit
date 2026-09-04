@@ -4,7 +4,7 @@ You are here because someone asked for a screen Etendo does not have: a board, a
 a picking view, a tile dashboard. This module is how you build it. Read this file, then
 the worked sample. Do not read core.
 
-> **STATUS: the runtime ships.** `OB.UIKit` (14 public symbols) and the quarterly OKR review
+> **STATUS: the runtime ships.** `OB.UIKit` (20 public symbols) and the quarterly OKR review
 > window both run in the live instance. For signatures read `docs/api/uikit.d.ts`, generated from
 > the runtime's own JSDoc. The recipes and the per-symbol reference are not written yet: never cite them.
 
@@ -53,7 +53,10 @@ the worked sample. Do not read core.
 | a board, form, master-detail, tiles, wizard | `docs/recipes/<shape>.md` — **planned, do not cite it**; work from the sample | L1 |
 | an exact signature, an option name | `docs/api/uikit.d.ts` | L2 |
 | one symbol at a time, with examples | `docs/api/reference.md` — **planned, do not cite it** | L2 |
-| criteria, paging, writes, permissions, drag, i18n, theming, navigation | `docs/guides/<topic>.md` — **planned, do not cite it** | L3 |
+| writes, optimistic updates, CSRF, permissions | `docs/guides/actions-and-permissions.md` | L3 |
+| labels, `t()`, number and date formatting | `docs/guides/i18n.md` | L3 |
+| opening a standard window from a custom one | `docs/guides/navigation.md` | L3 |
+| criteria, paging, drag, theming | `docs/guides/<topic>.md` — **planned, do not cite it** | L3 |
 | the AD rows a window needs | `docs/ad/README.md` — **planned, do not cite it**; use §7 of the sample | L4 |
 | to check a claim about the platform, or to resolve a contradiction | `docs/platform/facts.md` | L5 |
 | to prove the window works | `verify/` — run it, don't read it | L6 |
