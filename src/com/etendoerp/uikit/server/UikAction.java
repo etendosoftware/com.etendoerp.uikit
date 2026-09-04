@@ -127,11 +127,21 @@ public abstract class UikAction extends BaseActionHandler {
     }
   }
 
-  /** The handler's own keys, plus the marker that says the write happened. */
+  /**
+   * The handler's own keys, plus the marker that says whether the write happened.
+   *
+   * A handler that refuses on domain grounds returns its own {@code error} envelope rather than
+   * throwing, because throwing collapses every reason into the generic {@code ETUIK_Failed}. Such
+   * a result is stamped {@code success: false}: the two readers that matter -- the runtime's
+   * {@code envelopeError} and the window gate's {@code rejection()} -- look at {@code error}
+   * first and would read it as a rejection either way, but an envelope carrying both
+   * {@code success: true} and {@code error} contradicts itself, and anything reading only the
+   * marker would call the refusal a success.
+   */
   private JSONObject success(JSONObject result) {
     final JSONObject out = result == null ? new JSONObject() : result;
     try {
-      out.put("success", true);
+      out.put("success", !out.has("error"));
     } catch (Exception ignored) {
       return out;
     }
