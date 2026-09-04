@@ -11,6 +11,10 @@ has — a **write**. It is therefore the reference for `OB.UIKit.defineAction`: 
 rollback on failure, an in-flight guard that eats the second click of a double click, a server-side
 whitelist, and a CSRF token that is verified before the handler body is entered.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/alerts-inbox-initial.png) - [rail filtered to NEW](img/alerts-inbox-filtered-new.png)
+- [after an optimistic acknowledge](img/alerts-inbox-after-ack.png).
+
 ## 0. What was asked for, and what the data actually is
 
 The request was an alert inbox. The instance has one, and it is **not** a business inbox. Every

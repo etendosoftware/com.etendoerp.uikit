@@ -52,7 +52,7 @@
       "title": "Sample: quarterly OKR review",
       "for": "building the OKR review window, and the worked example of every layer: the agreed shape, state, regions, formulas, data contract, AD rows and the gates that hold it",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {
@@ -112,7 +112,7 @@
       "title": "Sample: administrator alert inbox",
       "for": "building a window that writes: optimistic acknowledge with rollback, drill-down into the standard window that owns the record, and auto-refresh",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {
@@ -122,7 +122,7 @@
       "title": "Sample: receivable and payable portfolio",
       "for": "building an aging cockpit: a switchable AR/AP side, buckets over a reference date, a twelve-month series, and one currency at a time",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {
@@ -132,7 +132,7 @@
       "title": "Sample: order preparation and confirm",
       "for": "building a window that mutates ERP documents: a document-action whitelist, a dry run by default, re-reading under scope, and rendering the ERP error verbatim",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {
@@ -142,7 +142,7 @@
       "title": "Sample: stock by product and warehouse",
       "for": "building a paged pivot with a search box: debounce, limit/offset and ilike in SQL, and a column axis that ignores the active filter",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {
@@ -152,7 +152,7 @@
       "title": "Sample: business partner 360",
       "for": "building a window with lazily fetched datasources: three sources with when() conditions, per-row tab resolution in SQL, and counts before anything is opened",
       "status": "present",
-      "budget_lines": 300,
+      "budget_lines": 305,
       "tokens": 3000
     },
     {

@@ -15,6 +15,9 @@ the state that the row detail obeys, and the screen says so out loud.
 **Files.** All in `com.etendoerp.uikit.samples`: `stock-pivot.js`, `stock-pivot.css`,
 `stock/StockPivot.java`, `etdemo-stock.view.json`, `verify/etdemo-stock.checks.mjs`.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/stock-pivot-initial.png) - [search in flight](img/stock-pivot-search.png).
+
 ## 0. What this data can and cannot show — read this first
 
 This section is first because it is the thing most likely to be misread.

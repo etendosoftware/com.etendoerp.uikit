@@ -12,6 +12,10 @@ writes to a table a batch job regenerates; this one calls `ProcessOrderUtil` and
 run that is the default and must be disarmed on purpose**, a **scoped re-read that is the whole
 authorization**, and an **ERP error printed verbatim**.
 
+**Evidence.** The live window at 1440x900, opened from the menu, not a mockup:
+[initial state](img/picking-initial.png) - [a confirm the ERP refused, its own sentence
+printed verbatim](img/picking-erp-error.png).
+
 ## 0. What was asked for, and what the data actually is
 
 The brief asked for "about ten draft sales orders to prepare". Measured through the window's own
