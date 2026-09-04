@@ -121,7 +121,7 @@
       "file": "docs/samples/cash-portfolio.md",
       "title": "Sample: receivable and payable portfolio",
       "for": "building an aging cockpit: a switchable AR/AP side, buckets over a reference date, a twelve-month series, and one currency at a time",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 300,
       "tokens": 3000
     },
