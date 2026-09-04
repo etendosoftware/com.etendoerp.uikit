@@ -31,8 +31,8 @@ One object, five keys. Everything on screen is a function of it plus the loaded 
 
 | key     | values                          | what it drives                                   |
 | ------- | ------------------------------- | ------------------------------------------------ |
-| `cycle` | `ETOKR_Cycle.id`                | which quarter is loaded; changing it reloads     |
-| `dept`  | `'all'` or `ETOKR_Department.id`| the detail panel and the agenda                  |
+| `cycle` | `ETOKRS_Cycle.id`                | which quarter is loaded; changing it reloads     |
+| `dept`  | `'all'` or `ETOKRS_Department.id`| the detail panel and the agenda                  |
 | `tab`   | `'obj' \| 'kr' \| 'upd'`        | which detail tab is open                         |
 | `sort`  | `'pace' \| 'pct' \| 'score'`    | ordering inside the panel                        |
 | `open`  | `{ [objectiveId]: true }`       | which objective cards are expanded               |
@@ -94,30 +94,49 @@ The view asks for two datasources. Build against these shapes; they are the cont
 before the tables exist.
 
 ```text
-ETOKRS_ReviewTree  ->  { cycle:   { id, name, datefrom, dateto, day, days },
-                         depts:   [ { id, name, lead } ],
-                         objs:    [ { id, dept, title, owner, weight, scoreTarget } ],
-                         krs:     [ { id, obj, title, owner, unit, base, target,
-                                      current, score, scoreTarget, weight, confidence } ] }
+ETOKRS_ReviewTree  ->  { cycles:    [ { id, name, datefrom, dateto, hasData } ],
+                         cycle:     { id, name, datefrom, dateto, day, days } | null,
+                         depts:     [ { id, name, lead } ],
+                         deptStats: [ { id, objs, krs, pct, score, scoreTarget } ],
+                         objs:      [ { id, dept, title, owner, weight, scoreTarget } ],
+                         krs:       [ { id, obj, title, owner, unit, base, target,
+                                        current, score, scoreTarget, weight, confidence } ] }
 
-ETOKRS_Checkins    ->  [ { id, kr, date, author, valueFrom, valueTo,
-                           scoreFrom, scoreTo, confidence, note } ]
+ETOKRS_Checkins    ->  { checkins: [ { id, kr, krTitle, date, author, valueFrom, valueTo,
+                                       scoreFrom, scoreTo, confidence, note, unit } ] }
 ```
 
 `day` and `days` are computed server-side from `datefrom`/`dateto` against the request date, so
-pace never depends on the browser clock.
+pace never depends on the browser clock. `cycle` is null when no cycle is readable; every array is
+then empty and the view renders its empty state rather than failing.
+
+Two of these six exist because of where the filtering happens, and they are the part worth
+understanding before copying the shape:
+
+- `cycles` lists every quarter the user may open, with `hasData` so the picker can dim an empty
+  one. It ignores the department filter — the picker must not shrink as the user narrows.
+- `deptStats` carries the finished rollup for **every** readable department, computed in SQL by
+  the same arithmetic as section 5. `objs` and `krs` are narrowed by `dept`, so the rail could not
+  be derived from them: it has to keep drawing the departments the user is *not* looking at.
+
+`lead` is the department lead's display name, already resolved from `AD_User`; the client never
+receives the user id, because it has nothing to do with one.
 
 ## 7. AD rows required
 
 Five tables in `com.etendoerp.uikit.samples`, prefix `ETOKRS`. None of this exists in core.
 
-| table               | holds                | columns that matter                                                                        |
-| ------------------- | -------------------- | ------------------------------------------------------------------------------------------ |
-| `ETOKR_Cycle`       | the quarter          | `name`, `datefrom`, `dateto`, `isactive`, `status`                                          |
-| `ETOKR_Department`  | the department       | `name`, `lead` (AD_User), optional `ad_org_id`                                              |
-| `ETOKR_Objective`   | the objective        | `cycle`, `department`, `title`, `owner`, `weight`, `score_target`                           |
-| `ETOKR_KeyResult`   | the KR (child tab)   | `objective`, `title`, `owner`, `unit`, `base`, `target`, `current`, `score`, `score_target` |
-| `ETOKR_Checkin`     | the update (grandchild tab) | `keyresult`, `date`, `author`, `value_from`, `value_to`, `confidence`, `note`        |
+| table                | holds                       | columns that matter                                                                                 |
+| -------------------- | --------------------------- | --------------------------------------------------------------------------------------------------- |
+| `ETOKRS_Cycle`       | the quarter                 | `name`, `datefrom`, `dateto`, `isactive`                                                             |
+| `ETOKRS_Department`  | the department              | `name`, `lead`, `seqno`, `ad_org_id`                                                                 |
+| `ETOKRS_Objective`   | the objective               | `etokrs_cycle_id`, `etokrs_department_id`, `name`, `owner`, `weight`, `scoretarget`, `seqno`         |
+| `ETOKRS_KeyResult`   | the KR (child tab)          | `etokrs_objective_id`, `name`, `owner`, `uom`, `basevalue`, `targetvalue`, `currentvalue`, `score`, `scoretarget`, `weight`, `confidence`, `seqno` |
+| `ETOKRS_Checkin`     | the update (grandchild tab) | `etokrs_keyresult_id`, `checkindate`, `author`, `valuefrom`, `valueto`, `scorefrom`, `scoreto`, `confidence`, `note` |
+
+The column names are the physical ones, because the datasources are SQL and rename on the way out:
+`name` becomes `title`, `uom` becomes `unit`, `basevalue` becomes `base`. Section 6 is what the
+client sees; this table is what the database holds.
 
 Plus the usual view rows: one `OBUIAPP_View_Impl`, one `AD_MENU` entry, one
 `OBUIAPP_View_Role_Access` per role, and one `AD_MESSAGE` per visible string.
@@ -132,8 +151,10 @@ enforced in the datasource, or any authenticated user can read every department.
 (function () {
   'use strict';
 
-  OB.UIKit.defineDatasource('ETOKRS_ReviewTree', { entity: 'ETOKR_Objective', depth: 2 });
-  OB.UIKit.defineDatasource('ETOKRS_Checkins', { entity: 'ETOKR_Checkin' });
+  // A datasource is a name pointing at an action handler. KernelServlet publishes a handler by
+  // fully qualified class name, so this needs no AD row of its own.
+  OB.UIKit.datasource('ETOKRS_ReviewTree', { action: 'com.etendoerp.uikit.samples.okr.ReviewTree' });
+  OB.UIKit.datasource('ETOKRS_Checkins', { action: 'com.etendoerp.uikit.samples.okr.Checkins' });
 
   const PACE_AT_RISK = -12;
 
@@ -148,11 +169,18 @@ enforced in the datasource, or any authenticated user can read every department.
 
   OB.UIKit.defineView({
     name: 'ETOKRS_Review',
-    key: 'etokrs.review',
-    title: OB.UIKit.t('ETOKRS_ReviewTitle'),
+    // A label key, not a translated string: the runtime resolves it, and it also becomes the tab
+    // title. Pass t() here and you translate before the labels are registered.
+    title: 'ETOKRS_ReviewTitle',
+    regions: ['filters', 'rail', 'agenda', 'panel'],
+    keepScroll: ['panel'],
     state: { cycle: null, dept: 'all', tab: 'obj', sort: 'pace', open: {} },
     data: { tree: 'ETOKRS_ReviewTree', updates: 'ETOKRS_Checkins' },
-    keepScroll: ['panel'],
+
+    // Only these reach the server, and a change to them is what triggers a refetch. Everything
+    // else in state -- tab, sort, open -- is local, so clicking a tab costs no request. This is
+    // also what the URL carries, so a bookmarked filter comes back.
+    params: (s) => ({ cycle: s.cycle, dept: s.dept }),
 
     render(s, d) {
       const pace = d.tree.cycle ? (d.tree.cycle.day / d.tree.cycle.days) * 100 : 0;
@@ -179,11 +207,18 @@ enforced in the datasource, or any authenticated user can read every department.
     }
   });
 
+  // Interpolate the array, never .join('') it: html`` returns already-safe HTML, and joining
+  // flattens that back to a plain string which the enclosing html`` then escapes on sight.
   function railRegion(s, d, pace) {
-    return d.tree.depts.map((dept) => OB.UIKit.badge(dept.name, stateOf(pace))).join('');
+    return OB.UIKit.html`<div class="uik-row">${d.tree.deptStats.map((st) =>
+      OB.UIKit.badge(deptName(d, st.id), stateOf(st.pct - pace)))}</div>`;
   }
   function agendaRegion(behind) {
-    return behind.map((x, i) => `${i + 1}. ${x.kr.title}`).join('');
+    return OB.UIKit.html`<ol>${behind.map((x) => OB.UIKit.html`<li>${x.kr.title}</li>`)}</ol>`;
+  }
+  function deptName(d, id) {
+    const dept = d.tree.depts.find((x) => x.id === id);
+    return dept ? dept.name : id;
   }
   function panelRegion() {
     return '';
@@ -191,25 +226,53 @@ enforced in the datasource, or any authenticated user can read every department.
 })();
 ```
 
-## 9. Decisions still open — do not guess these
+What the runtime does for you here, and what it will not:
 
-1. **Department: an Etendo organisation or its own table?** `AD_Org` inherits the permission
-   tree for free but ties OKRs to the accounting structure. Own table is conceptually cleaner
-   and forces you to solve permissions by hand. Recommendation: own table, with an optional
-   `ad_org_id`.
-2. **Score scale 0.00–1.00 or 0–10?** The design assumes 0.00–1.00 with a typical target of
-   0.70–0.80. A 0–10 scale changes the meter and every label.
-3. **Are KRs weighted?** The rollup supports per-KR weight and the UI shows it only when it
-   differs from 1. If everything weighs the same, drop the column.
-4. **Read-only, or editable in place?** The honest PoC is read-only plus one action that opens
-   the standard check-in tab. Inline editing is a later round.
-5. **Who sees what?** A department head seeing their own department and management seeing all
-   is a datasource rule, not a UI rule. See fact F6.
+- `title` is looked up as a label key and pushed onto the tab. A lazily fetched view arrives after
+  its tab exists — core opens the tab titled with the view id and never relabels it — so the
+  runtime fixes the title from `setViewTabId`, the hook core calls once the tab is ours.
+- `params` is published through `getBookMarkParams` (core spells it with a capital M and P; misname
+  it and the URL silently stops carrying state), and the runtime pushes history whenever those
+  params change, which is what makes `dept=Comercial` survive a reload.
+- Nothing deduplicates your renders for you beyond the per-region string diff: `render` returns
+  every region every time, and only the regions whose HTML actually changed are written.
 
-## 10. What the gates will demand
+## 9. Decisions, and what they cost
+
+These were open questions in the design round. The window shipped, so they are answered — kept
+here because each one is a fork a similar window will reach, and the reasoning outlives the choice.
+
+1. **Department is its own table, not an `AD_Org`.** `AD_Org` would have inherited the permission
+   tree for free, but it ties OKRs to the accounting structure, and OKR departments do not survive
+   contact with a chart of accounts. `ETOKRS_Department` keeps an optional `ad_org_id` for the
+   installations where the two really do coincide.
+2. **Score is 0.00–1.00**, with targets typically 0.70–0.80. The meter's ten cells are that scale;
+   a 0–10 scale would change the instrument and every label with it.
+3. **KRs are weighted.** `weight` exists on both the objective and the KR, and both rollup levels
+   are weighted means. The UI shows a weight only when it differs from 1, so an installation that
+   weighs everything equally never sees the column.
+4. **Read-only.** Every number on screen is derived, and there is no write path: the meeting reads
+   this window and edits in the standard tabs. Inline editing is a later round.
+5. **Scope is a datasource rule.** `OkrQuery.scopeClause` is in every query, including the one
+   behind `deptStats`, because fact F6 means a served view proves nothing about who may read it.
+
+## 10. What the gates demand
+
+Source gates, on every commit (`verify/check-source.mjs`):
 
 * `G1`/`G2` — the shipped app file minifies with the kernel's JSMin and is a single IIFE.
 * `G5` — every code block here keeps minifying and parsing, and every `OB.UIKit.*` it names
   stays in `uikit.contract.json`.
 * `G8` — the symbols this sample leans on must not be marked `planned` in the index once the
   runtime ships them, and this file must stay registered in the index.
+* `G9` — `docs/api/uikit.d.ts` still matches the JSDoc it is generated from.
+
+Window gates, against a running instance (`verify/check-window.mjs`):
+
+* `W1`/`W2`/`W3` — the AD rows are wired with no Java class, the bundle on the classpath is
+  current, and `OBUIAPP_MainLayout/View` serves something the browser can eval.
+* `W4` — one call really does return cycle, departments, objectives and KRs, with no orphan KR.
+* `W5` — every department narrows in SQL, `deptStats` survives the filter, and the app does not
+  re-filter `objs`/`krs` in the client.
+* `W6` — section 5 recomputed independently from the raw rows, and compared against what the
+  datasource returned. If you change a formula here, that gate is what fails.
