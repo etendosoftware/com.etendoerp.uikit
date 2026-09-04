@@ -151,7 +151,7 @@
       "file": "docs/samples/partner-360.md",
       "title": "Sample: business partner 360",
       "for": "building a window with lazily fetched datasources: three sources with when() conditions, per-row tab resolution in SQL, and counts before anything is opened",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 300,
       "tokens": 3000
     },
