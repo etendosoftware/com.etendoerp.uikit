@@ -375,11 +375,11 @@
     },
     {
       "id": "G1",
-      "what": "every shipped web file survives JSMin + node --check"
+      "what": "every web file shipped by any com.etendoerp.uikit* module survives JSMin + node --check; zero shipped files is a failure, not a skip -- a framework that ships no JavaScript is broken"
     },
     {
       "id": "G2",
-      "what": "every shipped web file is a single IIFE with no top-level bindings"
+      "what": "every web file shipped by any com.etendoerp.uikit* module is a single IIFE with no top-level bindings"
     },
     {
       "id": "G3",
