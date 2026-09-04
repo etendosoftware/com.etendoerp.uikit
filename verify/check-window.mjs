@@ -180,6 +180,27 @@ async function login() {
   if (/Login_TextBox|frmIdentificacion/.test(body)) {
     throw new Error('el login devolvio otra vez el formulario: credenciales o instancia distintas');
   }
+  /*
+   * A 200 is not a usable session. LoginHandler has exactly one success exit -- goToTarget, the
+   * only one that answers showMessage:false -- and every other exit returns a message *before* it
+   * chooses a role: last build failed, tomcat not restarted, no non-restricted role. That session
+   * authenticates, carries no role, and therefore reads client '0' / org '0', where no business
+   * data lives. Without this check a pending rebuild does not fail the sweep loudly: it turns
+   * every gate downstream into "no hay datos", which blames the dataset for a broken instance.
+   */
+  let envelope = null;
+  try {
+    envelope = JSON.parse(body);
+  } catch {
+    // Not the JSON envelope. Older paths redirect straight to the menu, and that is a success.
+  }
+  if (envelope && envelope.showMessage) {
+    const said = `${envelope.messageTitle || ''} ${envelope.messageText || ''}`
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    throw new Error(`el login no dejo la sesion utilizable: ${said}`);
+  }
   cookie = collectCookies(res) || jar;
   return cookie;
 }
