@@ -1,17 +1,18 @@
 # Sample: quarterly OKR review
 
-> **STATUS: design only.** No runtime, no AD rows, no `web/` file exists for this yet. This
-> document is the agreed shape; it is what R1 must be able to produce. If you are an agent and
-> you were asked to build the OKR review, build exactly this — do not redesign it.
+> **STATUS: shipped.** The window runs in the live instance, reached from `AD_MENU` under the
+> "UIKit demo" folder: an `OBUIAPP_View_Impl` row carrying a FreeMarker template with a NULL
+> `classname`, so it needs no Java view code. This document is the shape it was built to — if
+> you are asked to change the window, change this document with it.
 
-**Recipe shape:** master–detail (`L1-master-detail`), plus two things that shape does not cover
-on its own: filters that live in state rather than in navigation, and a derived list computed
-in the client over data already loaded.
+**Recipe shape:** master–detail (`L1-master-detail`, a planned recipe — it is not written, do
+not go looking), plus two things that shape does not cover on its own: filters that live in state
+rather than in navigation, and a derived list computed in the client over data already loaded.
 
-**Why this sample exists.** It is the third consumer of the kit, after POS and the order board.
-Two consumers never amortise a framework; three do. It is also the most representative of what
-a customer actually asks for: filters, a three-level hierarchy, derived numbers, and a layout
-that is not a grid.
+**Why this sample exists.** It is the kit's first real consumer, and the most representative of
+what a customer actually asks for: filters, a three-level hierarchy, derived numbers, and a
+layout that is not a grid. One consumer does not amortise a framework, which is what the demo
+module `com.etendoerp.uikit.demos` is for.
 
 ---
 
