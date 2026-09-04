@@ -69,6 +69,47 @@ declare namespace OB.UIKit {
   function style(key: string, css: string): void;
 
   /**
+   * Formats one value the way the rest of Etendo formats it, and never throws.
+   *
+   * Delegates to OB.Utilities.Number.JSToOBMasked and OB.Utilities.Date.JSToOB, so a number here
+   * reads exactly like the same number in a standard grid. `pct` expects percentage points, not a
+   * fraction: 62.5 renders as "62.5%", which is what rail() and every pace calculation produce.
+   *
+   * There is no session currency in the client, so this function never invents one: pass
+   * opts.currency with the symbol or ISO code the datasource returned, next to the amount it
+   * belongs to. An amount without its currency is a number, not money.
+   *
+   * Returns a plain string, not a Raw: the caller decides whether to escape it. When OB.Format is
+   * absent -- an early page, a test harness, a stripped instance -- it degrades to String(value)
+   * rather than failing, because a screen showing raw numbers is still a working screen.
+   */
+  function fmt(value: unknown, kind: 'number' | 'int' | 'qty' | 'price' | 'amount' | 'pct' | 'date' | 'dateTime', opts?: object): string;
+
+  /**
+   * Opens the standard window that owns a record, on the tab that shows it.
+   *
+   * A wrapper over OB.Utilities.openDirectTab, which resolves the window from the tab server-side,
+   * so a caller passes a tab id and a record id and nothing else. The tab id must come from SQL --
+   * UikQuery.tabFor -- never from a constant in JavaScript: c_order in this instance has six
+   * header tabs, and the wrong one opens "Return to vendor" for a sales order.
+   *
+   * Warns and returns when there is nothing to navigate with, instead of throwing: this is called
+   * from a click handler, and an exception there kills the handler for every later click too. A
+   * drill-down that does nothing is a smaller failure than a dead window.
+   */
+  function nav(tabId: string, recordId?: string): void;
+
+  /**
+   * Trailing-edge debounce: the wrapped function runs `ms` after the last call, never on the
+   * first. The returned function carries a .cancel() that drops a pending run, which is what a
+   * view's destroy hook needs so a timer cannot fire into a DOM that is already gone.
+   *
+   * Trailing rather than leading because the caller is a search box: the useful moment is when
+   * typing stops, and a leading edge would fire a request for the first letter every time.
+   */
+  function debounce(fn: Function, ms?: number): Function;
+
+  /**
    * A small state pill. An unknown state degrades to the neutral one rather than throwing.
    */
   function badge(text: unknown, state: 'ok' | 'risk' | 'bad' | 'flat'): Raw;
@@ -86,26 +127,126 @@ declare namespace OB.UIKit {
   function meter(score: number, target: number): Raw;
 
   /**
+   * A horizontal bar chart, in HTML and CSS rather than SVG.
+   *
+   * SVG was rejected here deliberately. A cockpit's bar labels are real text -- a bucket name, a
+   * count, a document reference -- and text inside an svg element has to be either a foreignObject
+   * or hand-measured, so it cannot wrap and cannot be selected or copied. rail() already proves
+   * that a bar driven by one custom property is enough, and this is the same trick applied to a
+   * list: each bar carries --uik-v and paints its own fill behind ordinary, selectable text.
+   *
+   * The scale is shared by every bar, so the lengths are comparable: `max` when given, otherwise
+   * the largest absolute value in the list. Negative values are drawn at their absolute length and
+   * marked data-negative, which is what a month-over-month series needs.
+   */
+  function bars(spec: {
+    items: Object[];  // one object per bar: label, value, and optionally state and sub
+    max?: number;  // the shared scale; the largest absolute value by default
+    format?: Function;  // (value) => string for the printed number; String by default
+    label?: string;  // an aria-label, which also turns the list into a labelled group
+  }): Raw;
+
+  /**
+   * A sparkline: one polyline over a series, no axes, no labels, no numbers.
+   *
+   * SVG here, unlike bars(), because a sparkline is pure geometry -- there is no text in it at
+   * all, which is the one case SVG is unambiguously better at than CSS. The shape carries no
+   * value a reader can read off it, so it is decorative by default: without `label` it is
+   * aria-hidden, and the number it accompanies is what a screen reader announces. Pass `label`
+   * only when the trend itself is the information.
+   *
+   * A single point, or a series where every value is equal, draws a flat line at mid height
+   * instead of dividing by a zero range.
+   */
+  function spark(spec: {
+    values: number[];  // the series, oldest first; non-finite entries are dropped
+    width?: number;  // 120 by default
+    height?: number;  // 28 by default
+    state?: 'ok' | 'risk' | 'bad' | 'flat';  // the stroke colour
+    area?: boolean;  // fill the area under the line
+    label?: string;  // an aria-label; without it the graphic is hidden from a reader
+  }): Raw;
+
+  /**
    * Confines n to [lo, hi].
    */
   function clamp(n: number, lo: number, hi: number): number;
 
   /**
+   * Registers a write. It is reached only from ctx.run(name, arg, callback) inside a view, which
+   * is the whole point: the token, the in-flight guard, the optimistic snapshot and the refetch
+   * all live on that path, so an app cannot POST without them by accident.
+   *
+   * The payload always carries csrfToken from OB.User. When the page has no token the request is
+   * not sent at all and the callback receives an Error with code ETUIK_NoCsrf -- the same code
+   * UikAction returns when the server rejects a token -- because KernelServlet does not check
+   * CSRF itself, so a write that forgets the token is simply rejected by the handler.
+   *
+   * optimistic(state, arg) mutates state before the request and is repainted immediately, without
+   * going through ctx.set, so it never triggers a refetch: a refetch racing an unfinished write
+   * would repaint the server's old answer over the user's action. If the request fails, state is
+   * restored from a JSON snapshot taken before the mutation. Two consequences, and they constrain
+   * every window that writes:
+   *
+   *   1. state must be JSON-serializable. A Date, a function, a DOM node or a cycle does not
+   *      survive the snapshot, so it cannot live in state.
+   *   2. optimistic must not touch any key that params(state) reads, or the mutation -- and the
+   *      rollback after it -- would change a datasource signature and provoke exactly the refetch
+   *      this design exists to avoid.
+   *
+   * refetch names what to reload after a success: true for everything, or an alias, or a list of
+   * aliases. confirm is a question shown before anything happens, as a string or as
+   * (state, arg) => string.
+   */
+  function defineAction(spec: {
+    name: string;  // the name ctx.run uses
+    action: string;  // the handler's fully qualified class name; it must extend UikAction
+    payload?: Function;  // (state, arg) => the request body, before csrfToken
+    optimistic?: Function;  // (state, arg) => void, applied before the request
+    refetch?: boolean | string | string[];  // what to reload on success
+    confirm?: string | Function;  // a question to ask first
+  }): void;
+
+  /**
    * Defines a Classic view that owns its own DOM subtree.
    *
    * Rendering is whole-region strings, and a region is written only when its string changed. That
-   * is what keeps the filter bar from flickering when the user clicks a chip inside it.
+   * is what keeps the filter bar from flickering when the user clicks a chip inside it. Caret and
+   * selection survive a region rewrite, so a search box does not lose a keystroke mid-word.
+   *
+   * render is called as (state, data, ui). ui carries what the runtime knows and the app does not:
+   * ui.first while the first load has not finished, ui.busy while any request is in flight, and
+   * ui.errors keyed by data alias -- so a source that failed on a refetch is reported next to the
+   * rest of a screen that is still perfectly good, instead of blanking it.
+   *
+   * Event handlers receive one ctx and nothing else:
+   *
+   *   ctx.state, ctx.data, ctx.ui        the same three objects render sees
+   *   ctx.set(partial)                   merge into state, then reconcile
+   *   ctx.toggle(key, id)                flip one id in a set-shaped state key
+   *   ctx.run(name, arg, callback)       run a defineAction; false when it did not go out
+   *   ctx.later(fn, ms)                  a timer this view owns; returns its cancel function
+   *   ctx.refetch(alias)                 drop a cached alias and reload it; no alias means all
+   *
+   * In the on: map the first matching rule wins and the rest are skipped. That is deliberate and
+   * relied upon: a specific 'click [data-row] button' registered before a general
+   * 'click [data-row]' shadows it, which is how a row with its own action button works at all.
+   * Changing it to run every match would silently break any app already written against it.
    */
   function defineView(spec: {
     name: string;  // the view id, matching OBUIAPP_View_Impl.name and isc.<name>
     title?: string;  // label key for the tab title; falls back to the view id
-    state: object;  // the initial state object; every key is yours
-    data?: Record<string, string>;  // { alias: 'DatasourceName' }, fetched before the first render
-    params?: (a: object) => Record<string, unknown>;  // (state) => request params; a change to these refetches
-    regions?: string[];  // region names, in render order
+    state: object;  // the initial state object; every key is yours, and JSON-only
+    data?: Record<string, string | Object>;  // alias to datasource name, or to a lazy entry
+    params?: (a: object) => Record<string, unknown>;  // (state) => request params
+    regions: string[];  // region names, in render order; required
+    loading?: string;  // region that shows the first-load block; the first region by default
     keepScroll?: string[];  // region names whose scrollTop survives a redraw
-    render: (a: object, b: object) => Record<string, string | Raw>;  // (state, data) => { region: html }
+    render: (a: object, b: object, c: object) => Record<string, string | Raw>;  // (state, data, ui) => region html
     on?: Record<string, (a: object, b: Event, c: Element) => void>;  // { 'click [data-x]': handler }
+    activate?: (a: object) => void;  // the tab became visible
+    deactivate?: (a: object) => void;  // the tab lost focus to another tab
+    destroy?: (a: object) => void;  // the tab is closing; drop anything the runtime cannot
   }): object;
 
 }

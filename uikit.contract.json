@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0-r2",
+  "version": "0.3.0-r2",
   "module": {
     "javapackage": "com.etendoerp.uikit",
     "prefix": "ETUIK",
@@ -9,7 +9,7 @@
   "status": {
     "round": "R2-UIKIT-DEMOS",
     "runtime": "present",
-    "note": "The runtime and six windows ship and run: the OKR review in com.etendoerp.uikit.samples and five demos in com.etendoerp.uikit.demos. L5 facts, L6 source gates and L7 window gates are real; L7 is a runner over the per-window manifests. L2-dts is generated from the runtime JSDoc. Recipes and the per-symbol reference land later, harvested from the samples rather than written ahead of them; entries marked planned are not written yet and must not exist."
+    "note": "The runtime and six windows ship and run: the OKR review in com.etendoerp.uikit.samples and five demos in com.etendoerp.uikit.demos. L5 facts, L6 source gates and L7 window gates are real; L7 is a runner over the per-window manifests. L2-dts is generated from the runtime JSDoc. The runtime now also ships the write path (defineAction plus ctx.run), formatting, navigation, debounce and the two chart primitives, with L3-actions, L3-i18n and L3-nav written against them. The remaining recipes and the per-symbol reference land later, harvested from the samples rather than written ahead of them; entries marked planned are not written yet and must not exist."
   },
   "budget": {
     "typical_window": "AGENTS.md + one recipe + uikit.d.ts, about 10k tokens, zero core files read"
@@ -191,7 +191,7 @@
       "file": "docs/guides/actions-and-permissions.md",
       "title": "Server actions and access control",
       "for": "business logic, and closing the F6 gap",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 200,
       "tokens": 2200
     },
@@ -221,7 +221,7 @@
       "file": "docs/guides/i18n.md",
       "title": "Labels and formatting",
       "for": "t(), AD_MESSAGE rows, money, dates",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 140,
       "tokens": 1500
     },
@@ -231,7 +231,7 @@
       "file": "docs/guides/navigation.md",
       "title": "Opening standard windows and records",
       "for": "handing off to core UI",
-      "status": "planned",
+      "status": "present",
       "budget_lines": 140,
       "tokens": 1500
     },
@@ -330,32 +330,32 @@
     {
       "name": "OB.UIKit.defineAction",
       "documented_in": "L3-actions",
-      "status": "planned"
+      "status": "present"
     },
     {
       "name": "OB.UIKit.fmt",
       "documented_in": "L3-i18n",
-      "status": "planned"
+      "status": "present"
     },
     {
       "name": "OB.UIKit.nav",
       "documented_in": "L3-nav",
-      "status": "planned"
+      "status": "present"
     },
     {
       "name": "OB.UIKit.debounce",
       "documented_in": "L2-dts",
-      "status": "planned"
+      "status": "present"
     },
     {
       "name": "OB.UIKit.bars",
       "documented_in": "L2-dts",
-      "status": "planned"
+      "status": "present"
     },
     {
       "name": "OB.UIKit.spark",
       "documented_in": "L2-dts",
-      "status": "planned"
+      "status": "present"
     }
   ],
   "invariants": [
