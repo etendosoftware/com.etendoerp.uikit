@@ -8,11 +8,11 @@ gated. If you are a person, the same entry point works — start at
 [`AGENTS.md`](AGENTS.md), and use [`uikit.contract.json`](uikit.contract.json) as the index.
 
 **Status: the runtime ships.** `OB.UIKit` is implemented in
-`web/com.etendoerp.uikit/js/uikit.js` and exports 14 public symbols; the first window built on
-it, the quarterly OKR review in `com.etendoerp.uikit.samples`, runs in the live instance off a
-FreeMarker template with no Java view class. Five more demo windows land this round in
-`com.etendoerp.uikit.demos`. Still unwritten: the L1 recipes, the per-symbol API reference and
-the L3 guides — `uikit.contract.json` marks them `planned`, and they must not be cited.
+`web/com.etendoerp.uikit/js/uikit.js` and exports 20 public symbols; every window in
+`docs/samples/` runs in the live instance off a FreeMarker template with no Java view class, all
+of them in `com.etendoerp.uikit.samples`. Written this round: the three L3 guides, and two of the
+five L1 recipes harvested from those windows. Still unwritten: the other three recipes and the
+per-symbol API reference — `uikit.contract.json` marks them `planned`, and they must not be cited.
 
 ```
 node modules/com.etendoerp.uikit/verify/check-source.mjs
